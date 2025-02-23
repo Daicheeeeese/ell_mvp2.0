@@ -151,7 +151,7 @@ export default function ArticleDetail({ article, onClose }: ArticleDetailProps) 
             {isAuthenticated && (
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-600">
-                  {user?.username}としてログイン中
+                  {user?.name}としてログイン中
                 </span>
                 <button
                   onClick={logout}
