@@ -1,0 +1,10 @@
+.word {
+  cursor: pointer;
+  padding: 2px;
+  margin: 0 2px;
+  display: inline-block;
+}
+
+.word:hover {
+  background-color: #fef9c3;
+} 
