@@ -57,4 +57,25 @@ function extractKeywords(text: string): string[] {
     .split(' ')
     .filter(word => word.length > 5)
     .slice(0, 5);
+}
+
+export async function transformArticle(article: any): Promise<Article> {
+  const japaneseTitle = await translateText(article.title);
+  const japaneseContent = await translateText(article.content || article.description);
+
+  return {
+    id: article.id || String(Date.now()),
+    title: article.title,
+    japaneseTitle,
+    content: article.content || article.description,
+    japaneseContent,
+    imageUrl: article.urlToImage || '/default-image.jpg',
+    category: article.category || 'general',
+    level: calculateLevel(article.content || article.description),
+    publishedAt: article.publishedAt || new Date().toISOString(),
+    readingTime: calculateReadingTime(article.content || article.description),
+    tags: extractTags(article.content || article.description),
+    difficulty: calculateDifficulty(article.content || article.description),
+    keywords: extractKeywords(article.content || article.description)
+  };
 } 
