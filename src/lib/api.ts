@@ -72,7 +72,7 @@ export async function transformArticle(article: any): Promise<Article> {
     imageUrl: article.urlToImage || '/default-image.jpg',
     category: article.category || 'general',
     level: calculateLevel(article.content || article.description),
-    publishedAt: article.publishedAt ? new Date(article.publishedAt).toISOString() : new Date().toISOString(),
+    publishedAt: article.publishedAt?.toString() || new Date().toISOString(),
     readingTime: calculateReadingTime(article.content || article.description),
     tags: extractTags(article.content || article.description),
     difficulty: calculateDifficulty(article.content || article.description),
@@ -97,6 +97,27 @@ const extractTags = (text: string): string[] => {
 };
 
 export async function fetchArticles(): Promise<Article[]> {
-  // 実装は後で
-  return [];
+  try {
+    const response = await fetch('YOUR_API_ENDPOINT');
+    const data = await response.json();
+    
+    return data.articles.map((article: any) => ({
+      id: String(Date.now()),
+      title: article.title,
+      content: article.content || article.description,
+      imageUrl: article.urlToImage || '/default-image.jpg',
+      category: 'general',
+      level: calculateLevel(article.content || article.description),
+      publishedAt: article.publishedAt?.toString() || new Date().toISOString(),
+      readingTime: calculateReadingTime(article.content || article.description),
+      tags: extractTags(article.content || article.description),
+      difficulty: calculateDifficulty(article.content || article.description),
+      keywords: extractKeywords(article.content || article.description),
+      japaneseTitle: '',
+      japaneseContent: ''
+    }));
+  } catch (error) {
+    console.error('Failed to fetch articles:', error);
+    return [];
+  }
 } 
