@@ -1,35 +1,47 @@
-import React from 'react';
-import ArticleDetail from './ArticleDetail';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { Article } from '../types/Article';
+
+interface NewsItemProps {
+  article: Article;
+}
 
 export default function NewsItem({ article }: NewsItemProps) {
   const router = useRouter();
   
   const handleClick = () => {
-    localStorage.setItem('selectedArticle', JSON.stringify(article));
-    
-    // 記事のタイトルと日時のみを使用してIDを生成
-    const articleId = Buffer.from(article.title).toString('base64')
-      .replace(/[+/=]/g, '')  // base64の特殊文字を除去
-      .slice(0, 100);         // 長さを制限
-    
-    router.push(`/articles/${articleId}`);
+    router.push(`/articles/${article.id}`);
   };
   
   return (
     <div 
-      className="border rounded-lg p-4 cursor-pointer hover:shadow-lg transition"
+      className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
       onClick={handleClick}
     >
-      {article.urlToImage && (
-        <img 
-          src={article.urlToImage} 
-          alt={article.title}
-          className="w-full h-48 object-cover mb-4 rounded"
-        />
-      )}
-      <h2 className="text-xl font-bold mb-2">{article.title}</h2>
-      <p className="text-gray-600">{article.description}</p>
+      <img 
+        src={article.imageUrl} 
+        alt={article.title}
+        className="w-full h-48 object-cover"
+      />
+      <div className="p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-sm text-gray-500">{article.level}</span>
+          <span className="text-sm text-gray-500">•</span>
+          <span className="text-sm text-gray-500">{article.readingTime} min read</span>
+        </div>
+        <h2 className="text-xl font-semibold mb-2">{article.title}</h2>
+        <p className="text-gray-600 line-clamp-2">{article.content}</p>
+        <div className="mt-4 flex gap-2">
+          {article.tags.map((tag, index) => (
+            <span 
+              key={index}
+              className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 } 
