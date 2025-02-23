@@ -60,40 +60,41 @@ function extractKeywords(text: string): string[] {
 }
 
 export async function transformArticle(article: any): Promise<Article> {
-  const japaneseTitle = await translateText(article.title);
-  const japaneseContent = await translateText(article.content || article.description);
+  const japaneseTitle = await translateText(article.title || '');
+  const japaneseContent = await translateText(article.content || article.description || '');
 
   return {
     id: article.id || String(Date.now()),
-    title: article.title,
+    title: article.title || '',
     japaneseTitle,
-    content: article.content || article.description,
+    content: article.content || article.description || '',
     japaneseContent,
     imageUrl: article.urlToImage || '/default-image.jpg',
     category: article.category || 'general',
-    level: calculateLevel(article.content || article.description),
-    publishedAt: new Date(article.publishedAt || Date.now()).toISOString(),
-    readingTime: calculateReadingTime(article.content || article.description),
-    tags: extractTags(article.content || article.description),
-    difficulty: calculateDifficulty(article.content || article.description),
-    keywords: extractKeywords(article.content || article.description)
+    level: calculateLevel(article.content || article.description || ''),
+    publishedAt: formatDate(article.publishedAt || Date.now()),
+    readingTime: calculateReadingTime(article.content || article.description || ''),
+    tags: extractTags(article.content || article.description || ''),
+    difficulty: calculateDifficulty(article.content || article.description || ''),
+    keywords: extractKeywords(article.content || article.description || '')
   };
 }
 
 // ヘルパー関数
 const calculateLevel = (text: string): 'beginner' | 'intermediate' | 'advanced' => {
-  // 実装は後で
   return 'intermediate';
 };
 
 const calculateReadingTime = (text: string): number => {
-  // 実装は後で
   return 5;
 };
 
 const extractTags = (text: string): string[] => {
-  // 実装は後で
   return ['tag1', 'tag2'];
+};
+
+const formatDate = (date: string | number | Date): string => {
+  return new Date(date).toISOString();
 };
 
 export async function fetchArticles(): Promise<Article[]> {
@@ -101,18 +102,18 @@ export async function fetchArticles(): Promise<Article[]> {
     const response = await fetch('YOUR_API_ENDPOINT');
     const data = await response.json();
     
-    return data.articles.map((article: any) => ({
+    return data.articles.map((article: any): Article => ({
       id: String(Date.now()),
-      title: article.title,
-      content: article.content || article.description,
+      title: article.title || '',
+      content: article.content || article.description || '',
       imageUrl: article.urlToImage || '/default-image.jpg',
       category: 'general',
-      level: calculateLevel(article.content || article.description),
-      publishedAt: new Date(article.publishedAt || Date.now()).toISOString(),
-      readingTime: calculateReadingTime(article.content || article.description),
-      tags: extractTags(article.content || article.description),
-      difficulty: calculateDifficulty(article.content || article.description),
-      keywords: extractKeywords(article.content || article.description),
+      level: calculateLevel(article.content || article.description || ''),
+      publishedAt: formatDate(article.publishedAt || Date.now()),
+      readingTime: calculateReadingTime(article.content || article.description || ''),
+      tags: extractTags(article.content || article.description || ''),
+      difficulty: calculateDifficulty(article.content || article.description || ''),
+      keywords: extractKeywords(article.content || article.description || ''),
       japaneseTitle: '',
       japaneseContent: ''
     }));
