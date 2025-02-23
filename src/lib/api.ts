@@ -72,7 +72,7 @@ export async function transformArticle(article: any): Promise<Article> {
     imageUrl: article.urlToImage || '/default-image.jpg',
     category: article.category || 'general',
     level: calculateLevel(article.content || article.description),
-    publishedAt: article.publishedAt || new Date().toISOString(),
+    publishedAt: article.publishedAt ? new Date(article.publishedAt).toISOString() : new Date().toISOString(),
     readingTime: calculateReadingTime(article.content || article.description),
     tags: extractTags(article.content || article.description),
     difficulty: calculateDifficulty(article.content || article.description),
