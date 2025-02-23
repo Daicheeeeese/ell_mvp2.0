@@ -1,12 +1,13 @@
-interface Article {
+export interface Article {
   id: string;
   title: string;
   content: string;
-  japaneseTitle: string;
-  japaneseContent: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  keywords: string[];
-  publishedDate: Date;
+  imageUrl: string;
+  category: string;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  publishedAt: string;
+  readingTime: number;
+  tags: string[];
 }
 
 export interface NewsAPIResponse {
