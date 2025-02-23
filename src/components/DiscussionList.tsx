@@ -90,7 +90,7 @@ export default function DiscussionList() {
 
   if (!user) return null;
 
-  const userDiscussions = getDiscussionsByUser(user.username);
+  const userDiscussions = getDiscussionsByUser(user.id);
 
   // デバッグ用のログを追加
   console.log('Current discussions:', userDiscussions);
