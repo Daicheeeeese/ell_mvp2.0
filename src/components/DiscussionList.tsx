@@ -4,79 +4,48 @@ import { useDiscussion } from '../hooks/useDiscussion';
 import { Discussion } from '../types/Discussion';
 
 interface PartnerModalProps {
-  partner: {
-    username: string;
-    description?: string;
-    nationality?: string;
+  partner?: {
+    id: string;
+    name: string;
+    role: 'student' | 'partner';
   };
-  discussionPoints?: string[];
+  discussionPoints?: {
+    topic: string;
+    points: string[];
+  }[];
   onClose: () => void;
 }
 
 function PartnerModal({ partner, discussionPoints, onClose }: PartnerModalProps) {
+  if (!partner || !discussionPoints) return null;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg max-w-lg w-full max-h-[80vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold">ディスカッション詳細</h3>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            ✕
+          <h2 className="text-xl font-bold">Discussion Details</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            Close
           </button>
         </div>
+        
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Partner</h3>
+          <p>{partner.name}</p>
+        </div>
 
-        <div className="space-y-6">
-          <div>
-            <h4 className="text-lg font-medium mb-3">マッチング相手</h4>
-            <div className="flex items-center space-x-4 bg-blue-50 p-4 rounded-lg">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-2xl text-blue-600">
-                  {partner.username.charAt(0)}
-                </span>
-              </div>
-              <div>
-                <h5 className="font-medium">{partner.username}</h5>
-                {partner.nationality && (
-                  <span className="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm mb-1">
-                    🌏 {partner.nationality}
-                  </span>
-                )}
-                {partner.description && (
-                  <p className="text-gray-600 text-sm">{partner.description}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {discussionPoints && (
-            <div>
-              <h4 className="text-lg font-medium mb-3">ディスカッションの論点</h4>
-              <div className="space-y-3">
-                {discussionPoints.map((point, index) => (
-                  <div 
-                    key={index}
-                    className="bg-green-50 p-4 rounded-lg"
-                  >
-                    <div className="flex items-start">
-                      <span className="bg-green-200 text-green-800 px-2 py-1 rounded text-sm mr-3">
-                        Point {index + 1}
-                      </span>
-                      <p className="text-green-800">{point}</p>
-                    </div>
-                  </div>
+        <div>
+          <h3 className="font-semibold mb-2">Discussion Points</h3>
+          {discussionPoints.map((point, index) => (
+            <div key={index} className="mb-4">
+              <h4 className="font-medium mb-1">{point.topic}</h4>
+              <ul className="list-disc list-inside">
+                {point.points.map((item, i) => (
+                  <li key={i} className="text-gray-600">{item}</li>
                 ))}
-              </div>
+              </ul>
             </div>
-          )}
-
-          <div className="bg-yellow-50 p-4 rounded-md mt-4">
-            <p className="text-yellow-700 text-sm">
-              💡 これらの論点を参考に、ディスカッションの準備を進めましょう。
-              質問や追加したい論点があれば、ディスカッション時に共有してください。
-            </p>
-          </div>
+          ))}
         </div>
       </div>
     </div>

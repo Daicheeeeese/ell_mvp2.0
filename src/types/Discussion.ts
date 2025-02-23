@@ -7,6 +7,15 @@ export interface Discussion {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   partnerName?: string;
   userId: string;
+  participants: {
+    id: string;
+    name: string;
+    role: 'student' | 'partner';
+  }[];
+  discussionPoints?: {
+    topic: string;
+    points: string[];
+  }[];
   aiTutorFeedback?: {
     pronunciation: string[];
     grammar: string[];
