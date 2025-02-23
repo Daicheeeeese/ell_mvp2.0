@@ -27,7 +27,7 @@ export async function fetchNewsArticles(category: string = 'general'): Promise<A
           japaneseContent,
           difficulty: calculateDifficulty(article.content || article.description),
           keywords: extractKeywords(article.content || article.description),
-          publishedDate: new Date(article.publishedAt)
+          publishedAt: new Date(article.publishedAt)
         };
       })
     );
@@ -78,4 +78,25 @@ export async function transformArticle(article: any): Promise<Article> {
     difficulty: calculateDifficulty(article.content || article.description),
     keywords: extractKeywords(article.content || article.description)
   };
+}
+
+// ヘルパー関数
+const calculateLevel = (text: string): 'beginner' | 'intermediate' | 'advanced' => {
+  // 実装は後で
+  return 'intermediate';
+};
+
+const calculateReadingTime = (text: string): number => {
+  // 実装は後で
+  return 5;
+};
+
+const extractTags = (text: string): string[] => {
+  // 実装は後で
+  return ['tag1', 'tag2'];
+};
+
+export async function fetchArticles(): Promise<Article[]> {
+  // 実装は後で
+  return [];
 } 
