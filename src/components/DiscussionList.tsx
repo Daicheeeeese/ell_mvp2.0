@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useDiscussion } from '../contexts/DiscussionContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useDiscussion } from '../hooks/useDiscussion';
+import { Discussion } from '../types/Discussion';
 
 interface PartnerModalProps {
   partner: {
