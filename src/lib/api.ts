@@ -109,7 +109,7 @@ export async function fetchArticles(): Promise<Article[]> {
       imageUrl: article.urlToImage || '/default-image.jpg',
       category: 'general',
       level: calculateLevel(article.content || article.description || ''),
-      publishedAt: formatDate(article.publishedAt || Date.now()),
+      publishedAt: article.publishedAt?.toISOString() || new Date().toISOString(),
       readingTime: calculateReadingTime(article.content || article.description || ''),
       tags: extractTags(article.content || article.description || ''),
       difficulty: calculateDifficulty(article.content || article.description || ''),
