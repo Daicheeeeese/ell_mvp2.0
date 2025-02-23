@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useDiscussion } from '../hooks/useDiscussion';
 import { Discussion } from '../types/Discussion';
@@ -87,80 +87,74 @@ export default function DiscussionList() {
   const { user } = useAuth();
   const { getDiscussionsByUser, cancelDiscussion } = useDiscussion();
   const [selectedDiscussion, setSelectedDiscussion] = useState<Discussion | null>(null);
+  const [discussions, setDiscussions] = useState<Discussion[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDiscussions = async () => {
+      if (user) {
+        try {
+          const fetchedDiscussions = await getDiscussionsByUser(user.id);
+          setDiscussions(fetchedDiscussions);
+        } catch (error) {
+          console.error('Failed to fetch discussions:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchDiscussions();
+  }, [user, getDiscussionsByUser]);
 
   if (!user) return null;
-
-  const userDiscussions = getDiscussionsByUser(user.id);
-
-  // デバッグ用のログを追加
-  console.log('Current discussions:', userDiscussions);
+  if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="mt-6 border-t pt-6">
-      <h3 className="text-lg font-semibold mb-4">登録済みディスカッション</h3>
-      {userDiscussions.length === 0 ? (
-        <p className="text-gray-500">登録済みのディスカッションはありません</p>
-      ) : (
-        <div className="space-y-4">
-          {userDiscussions.map((discussion) => (
-            <div
-              key={discussion.id}
-              className="bg-gray-50 p-4 rounded-lg"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h4 className="font-medium">{discussion.articleTitle}</h4>
-                  <p className="text-sm text-gray-600">
-                    {discussion.date} {discussion.time}
-                  </p>
-                </div>
-                <button
-                  onClick={() => cancelDiscussion(discussion.id)}
-                  className="text-red-600 hover:text-red-800 text-sm"
-                >
-                  キャンセル
-                </button>
-              </div>
-
-              {discussion.status === 'matched' ? (
-                <div 
-                  className="bg-green-50 p-3 rounded-md cursor-pointer hover:bg-green-100 transition-colors"
-                  onClick={() => setSelectedDiscussion(discussion)}
-                >
-                  <p className="text-green-700 font-medium mb-2">
-                    マッチング成立！
-                  </p>
-                  <div className="text-sm text-green-600">
-                    <div className="flex items-center gap-2 mb-1">
-                      <p className="font-medium">
-                        {discussion.participants[1].username}
-                        {discussion.participants[1].nationality && (
-                          <span className="text-gray-600">
-                            {" "}({discussion.participants[1].nationality})
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                    <p className="text-sm">
-                      {discussion.participants[1].description}
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">My Discussions</h1>
+      <div className="mt-6 border-t pt-6">
+        <h3 className="text-lg font-semibold mb-4">登録済みディスカッション</h3>
+        {discussions.length === 0 ? (
+          <p className="text-gray-500">登録済みのディスカッションはありません</p>
+        ) : (
+          <div className="space-y-4">
+            {discussions.map((discussion) => (
+              <div
+                key={discussion.id}
+                className="bg-white p-6 rounded-lg shadow-sm"
+              >
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h2 className="text-xl font-semibold mb-2">
+                      {discussion.articleTitle}
+                    </h2>
+                    <p className="text-gray-600">
+                      Date: {discussion.date} | Time: {discussion.time}
+                    </p>
+                    <p className="text-gray-600">
+                      Partner: {discussion.partnerName || 'Not assigned'}
+                    </p>
+                    <p className="text-gray-600">
+                      Status: {discussion.status}
                     </p>
                   </div>
-                  <p className="text-green-600 text-sm mt-2 italic">
-                    クリックして詳細を表示
-                  </p>
-                </div>
-              ) : (
-                <div className="bg-yellow-50 p-3 rounded-md">
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-700 mr-2"></div>
-                    <p className="text-yellow-700">相手を探しています...</p>
+                  <div className="flex gap-2">
+                    {discussion.status === 'pending' && (
+                      <button
+                        onClick={() => cancelDiscussion(discussion.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        Cancel
+                      </button>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {selectedDiscussion && (
         <PartnerModal
